@@ -25,9 +25,9 @@ export default function ScannerPage() {
     if (file) mutate(file);
   };
 
-  const total = data && Array.isArray(data) && data.reduce((acc: any, val: number ,i) => val.price + acc, 0);
-
-
+  const ticketDate = data && Array.isArray(data) && data[data.length - 1].date;
+  const total = data && Array.isArray(data) && data.reduce((acc: number, val: any) => val.price + acc, 0);
+  if (!isPending) console.log('mock', data);
   return (
     <div className="p-8 max-w-lg mx-auto">
       <h1 className="text-2xl font-bold mb-6">Smart Scanner + TanStack</h1>
@@ -68,6 +68,11 @@ export default function ScannerPage() {
           </div>}
         </div>
       )}
+      {!isPending &&
+      <div key={'total'} className="flex justify-between p-2 bg-gray-50 rounded text-black">
+            <span>Date:</span>
+            <span className="font-bold">{ticketDate && ticketDate }</span>
+      </div>}
     </div>
   );
 }
