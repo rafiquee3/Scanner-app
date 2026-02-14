@@ -25,6 +25,9 @@ export default function ScannerPage() {
     if (file) mutate(file);
   };
 
+  const total = data && Array.isArray(data) && data.reduce((acc: any, val: number ,i) => val.price + acc, 0);
+
+
   return (
     <div className="p-8 max-w-lg mx-auto">
       <h1 className="text-2xl font-bold mb-6">Smart Scanner + TanStack</h1>
@@ -32,7 +35,7 @@ export default function ScannerPage() {
       <div className="mb-6 p-4 border-2 border-dashed rounded-lg text-center">
         <input 
           type="file" 
-          accept="image/*" 
+          accept="image/* .pdf" 
           onChange={handleFileChange} 
           disabled={isPending}
           className="cursor-pointer"
@@ -53,11 +56,16 @@ export default function ScannerPage() {
       ) : (
         <div className="space-y-2">
           {data && Array.isArray(data) && data.map((item: Product, i: number) => (
-            <div key={i} className="flex justify-between p-2 bg-gray-50 rounded">
+            <div key={i} className="flex justify-between p-2 bg-gray-50 rounded text-black">
               <span>{item.name}</span>
               <span className="font-bold">{item.price} PLN</span>
             </div>
           ))}
+          
+          {total && <div key={'total'} className="flex justify-between p-2 bg-gray-50 rounded text-black">
+            <span>Total:</span>
+            <span className="font-bold">{total} PLN</span>
+          </div>}
         </div>
       )}
     </div>

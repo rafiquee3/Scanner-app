@@ -20,15 +20,13 @@ export async function scanImageAction(formData: FormData) {
     const bytes = await file.arrayBuffer();
     const base64Data = Buffer.from(bytes).toString("base64");
 
-    const prompt = `
-      Analyze this receipt. 
-      Extract products and prices. 
-      Return ONLY a JSON array: [{"name": string, "price": number}]
+     const prompt = `
+      przeprowadz analize zalaczonego zdjecia paragonu i wyciagnij z niego zakupione produkty, a nastepnie zwrocic odpowiedz jako czysty json o podanym formacie [{"name": string, "price": number}]
     `;
 
     console.log("Calling Gemini API with model gemini-2.0-flash...");
     const response = await client.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash",
       contents: [
         {
           role: "user",
@@ -36,19 +34,20 @@ export async function scanImageAction(formData: FormData) {
             { text: prompt },
             {
               inlineData: {
+                mimeType: file.type,
                 data: base64Data,
-                mimeType: file.type || "image/jpeg",
               },
             },
           ],
         },
       ],
     });
-
+    console.log('ssssss')
     const rawText = response.text || "[]";
     console.log("Gemini raw response:", rawText);
     
     const jsonString = rawText.replace(/```json|```/g, "").trim();
+    console.log('json', jsonString)
     
     try {
       return JSON.parse(jsonString);
