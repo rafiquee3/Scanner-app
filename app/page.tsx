@@ -26,11 +26,13 @@ export default function ScannerPage() {
   };
 
   const ticketDate = data && Array.isArray(data) && data[data.length - 1].date;
-  const total = data && Array.isArray(data) && data.reduce((acc: number, val: any) => val.price + acc, 0);
-  if (!isPending) console.log('mock', data);
+  const total = data && Array.isArray(data) 
+    ? data.reduce((acc: number, val: any) => acc + (val.price ? parseFloat(val.price) : 0), 0).toFixed(2)
+    : 0;
+
   return (
     <div className="p-8 max-w-lg mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Smart Scanner + TanStack</h1>
+      <h1 className="text-2xl font-bold mb-6">Smart Scanner</h1>
 
       <div className="mb-6 p-4 border-2 border-dashed rounded-lg text-center">
         <input 
@@ -40,7 +42,7 @@ export default function ScannerPage() {
           disabled={isPending}
           className="cursor-pointer"
         />
-        {isPending && <p className="mt-2 text-blue-500">AI is thinking... ✨</p>}
+        {isPending && <p className="mt-2 text-blue-500">Loading...</p>}
       </div>
 
       {isError && (
@@ -55,21 +57,25 @@ export default function ScannerPage() {
         </div>
       ) : (
         <div className="space-y-2">
-          {data && Array.isArray(data) && data.map((item: Product, i: number) => (
-            <div key={i} className="flex justify-between p-2 bg-gray-50 rounded text-black">
-              <span>{item.name}</span>
-              <span className="font-bold">{item.price} PLN</span>
-            </div>
-          ))}
+          {data && Array.isArray(data) && data
+            .filter((item: any) => item.name)
+            .map((item: Product, i: number) => (
+              <div key={i} className="flex justify-between p-2 bg-gray-50 rounded text-black ">
+                <span className='truncate'>{item.name}</span>
+                <span className="font-bold whitespace-nowrap font-bold shrink-0">{item.price} PLN</span>
+              </div>
+            ))}
           
-          {total && <div key={'total'} className="flex justify-between p-2 bg-gray-50 rounded text-black">
-            <span>Total:</span>
-            <span className="font-bold">{total} PLN</span>
-          </div>}
+          {data && Array.isArray(data) && (
+            <div key={'total'} className="flex justify-between p-2 bg-gray-50 rounded text-black border-t-2 border-gray-200">
+              <span>Total:</span>
+              <span className="font-bold">{total} PLN</span>
+            </div>
+          )}
         </div>
       )}
       {!isPending &&
-      <div key={'total'} className="flex justify-between p-2 bg-gray-50 rounded text-black">
+      <div key={'total'} className="flex justify-between p-2 bg-gray-50 rounded text-black mt-2">
             <span>Date:</span>
             <span className="font-bold">{ticketDate && ticketDate }</span>
       </div>}

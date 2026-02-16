@@ -21,7 +21,7 @@ export async function scanImageAction(formData: FormData) {
     const base64Data = Buffer.from(bytes).toString("base64");
 
      const prompt = `
-      przeprowadz analize zalaczonego zdjecia paragonu i wyciagnij z niego zakupione produkty, a nastepnie zwrocic odpowiedz jako czysty json o podanym formacie [{"name": string, "price": number}] i jako ostatni rekord wyciagniesz ze zdjecia date widoczna na paragonie i dodasz [{"date": string}]
+      przeprowadz analize zalaczonego zdjecia paragonu i wyciagnij z niego zakupione produkty, a nastepnie zwrocic odpowiedz jako czysty json o podanym formacie [{"name": string, "price": number}] i jako ostatni rekord wyciagniesz ze zdjecia date widoczna na paragonie i dodasz [{"date": string}, wlasciwosc price zaokraglaj do dwoch miejsc po przecinku]
     `;
 
     console.log("Calling Gemini API with model gemini-2.5-flash...");
