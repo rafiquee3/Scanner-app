@@ -19,7 +19,6 @@ export default function ScannerPage() {
       return await scanImageAction(formData);
     },
     onSuccess: (data) => {
-      console.log("Scanned successfully!", data);
       if (data && Array.isArray(data)) {
         setItems(data);
       }
@@ -38,6 +37,18 @@ export default function ScannerPage() {
 
   const handleDel = (indexToRemove: number) => {
     setItems(items.filter((_, i) => i !== indexToRemove));
+  };
+
+  const handleUpdate = (index: number, field: string, value: string) => {
+    if (field === 'price') {
+      // Allows only numbers with up to 2 decimal places
+      if (value !== "" && !/^\d*\.?\d{0,2}$/.test(value)) {
+        return;
+      }
+    }
+    const newItems = [...items];
+    newItems[index] = { ...newItems[index], [field]: value };
+    setItems(newItems);
   };
   return (
     <div className="p-8 max-w-lg mx-auto">
@@ -70,8 +81,22 @@ export default function ScannerPage() {
             .filter((item: any) => item.name)
             .map((item: Product, i: number) => (
               <div key={i} className="flex items-center justify-between p-3 bg-gray-300 rounded-md text-black gap-2">
-                <span className='truncate flex-1 min-w-0'>{item.name}</span>
-                <span className="font-bold whitespace-nowrap shrink-0">{item.price} PLN</span>
+                <input 
+                  type="text" 
+                  value={item.name} 
+                  onChange={(e) => handleUpdate(i, 'name', e.target.value)}
+                  className="bg-transparent border-none focus:ring-1 focus:ring-blue-400 rounded px-1 flex-1 min-w-0 outline-none"
+                />
+                <div className="flex items-center gap-1 shrink-0">
+                  <input 
+                    type="number" 
+                    step="0.01"
+                    value={item.price} 
+                    onChange={(e) => handleUpdate(i, 'price', e.target.value)}
+                    className="bg-transparent border-none focus:ring-1 focus:ring-blue-400 rounded px-1 w-20 font-bold text-right outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                  <span className="font-bold whitespace-nowrap">PLN</span>
+                </div>
                 <button onClick={() => handleDel(i)}>
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
@@ -97,12 +122,12 @@ export default function ScannerPage() {
           
           {items.length > 0 && (
             <div>
-              <div key="total" className="flex justify-between p-3 bg-[#FBD2B8] rounded text-black border-t-2 border-gray-200 rounded-md">
-                <span className=''>Total:</span>
+              <div key="total" className="flex justify-between p-3 bg-[#FBD2B8] rounded text-black rounded-md">
+                <span className='font-bold'>Total:</span>
                 <span className="font-bold underline">{total} PLN</span>
               </div>
-              <div key="date" className="flex justify-between p-3 bg-gray-50 rounded text-black mt-2 rounded-md">
-                <span>Date:</span>
+              <div key="date" className="flex justify-between p-3 bg-gray-50 rounded text-black mt-2 rounded-md ">
+                <span className="font-bold">Date:</span>
                 <span className="font-bold">{ticketDate}</span>
               </div>
               <div className="flex rounded text-black mt-2">

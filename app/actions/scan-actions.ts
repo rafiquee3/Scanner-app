@@ -42,12 +42,8 @@ export async function scanImageAction(formData: FormData) {
         },
       ],
     });
-    console.log('ssssss')
     const rawText = response.text || "[]";
-    console.log("Gemini raw response:", rawText);
-    
     const jsonString = rawText.replace(/```json|```/g, "").trim();
-    console.log('json', jsonString)
     
     try {
       return JSON.parse(jsonString);
