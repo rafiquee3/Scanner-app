@@ -1,8 +1,7 @@
 "use server";
 
 import { GoogleGenAI } from "@google/genai";
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createClient } from "@/src/utils/supabase-server";
 
 export async function scanImageAction(formData: FormData) {
   const file = formData.get("image") as File;
@@ -60,29 +59,7 @@ export async function scanImageAction(formData: FormData) {
 }
 
 export async function saveReceiptAction(items: any[], total: string, date: string) {
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              );
-            } catch (error) {
-              // The `setAll` method was called from a Server Component.
-              // This can be ignored if you have middleware refreshing
-              // user sessions.
-            }
-          },
-        },
-      }
-    );
+    const supabase = await createClient();
   
   // Get the current user
   const { data: { user } } = await supabase.auth.getUser();
@@ -111,4 +88,26 @@ export async function saveReceiptAction(items: any[], total: string, date: strin
     .insert(itemsToInsert);
   if (iError) throw iError;
   return { success: true };
+}
+
+export async function getReceiptsAction() {
+  const supabase = await createClient();
+  
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+
+  const { data, error } = await supabase
+    .from('receipts')
+    .select(`
+      *,
+      receipt_items (*)
+    `)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching receipts:', error);
+    return { error: error.message };
+  }
+
+  return { data };
 }

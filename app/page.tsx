@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { scanImageAction } from "./actions/scan-actions";
+import { scanImageAction, saveReceiptAction } from "./actions/scan-actions";
 
 interface Product {
   name: string;
@@ -12,7 +12,8 @@ interface Product {
 export default function ScannerPage() {
   const [items, setItems] = useState<any[]>([]);
 
-  const { mutate, data, isPending, isError, error } = useMutation({
+  // Scan Mutation
+  const { mutate: scanMutate, data, isPending: isScanning, isError, error } = useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
       formData.append("image", file);
@@ -25,9 +26,27 @@ export default function ScannerPage() {
     }
   });
 
+  // Save Mutation
+  const { mutate: saveMutate, isPending: isSaving } = useMutation({
+    mutationFn: async () => {
+      // Filter out meta records like {date: ...}
+      const productItems = items.filter(item => item.name);
+      return await saveReceiptAction(productItems, total, ticketDate);
+    },
+    onSuccess: (res) => {
+      if (res.success) {
+        alert("Receipt saved successfully!");
+        setItems([]); // Clear UI after successful save
+      }
+    },
+    onError: (err: any) => {
+      alert("Error saving: " + err.message);
+    }
+  });
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) mutate(file);
+    if (file) scanMutate(file);
   };
 
   const ticketDate = items.length > 0 ? items[items.length - 1].date : null;
@@ -59,10 +78,10 @@ export default function ScannerPage() {
           type="file" 
           accept="image/* .pdf" 
           onChange={handleFileChange} 
-          disabled={isPending}
+          disabled={isScanning}
           className="cursor-pointer"
         />
-        {isPending && <p className="mt-2 text-blue-500">Loading...</p>}
+        {isScanning && <p className="mt-2 text-blue-500">Loading...</p>}
       </div>
 
       {isError && (
@@ -131,7 +150,13 @@ export default function ScannerPage() {
                 <span className="font-bold">{ticketDate}</span>
               </div>
               <div className="flex rounded text-black mt-2">
-                <button className="w-1/2 bg-green-200 p-2 hover:bg-green-400 cursor-pointer">Save</button>
+                <button 
+                  onClick={() => saveMutate()}
+                  disabled={isSaving}
+                  className="w-1/2 bg-green-200 p-2 hover:bg-green-400 cursor-pointer disabled:bg-gray-200 disabled:cursor-not-allowed"
+                >
+                  {isSaving ? "Saving..." : "Save"}
+                </button>
                 <button className="w-1/2 bg-red-200 p-2 hover:bg-red-400 cursor-pointer" onClick={() => setItems([])}>Del All</button>
               </div>
             </div>

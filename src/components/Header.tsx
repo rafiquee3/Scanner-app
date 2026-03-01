@@ -32,9 +32,17 @@ export function Header() {
     };
 
     return (
-        <div className="w-full h-[70px] flex bg-blue-600 content-center items-center px-8 text-white shadow-md">
-            <div className="text-xl font-bold flex-1">
-                <Link href="/">Scanner AI</Link>
+<div className="mx-4 mt-4 h-[70px] flex bg-blue-600 content-center items-center px-8 text-white shadow-md rounded-xl">
+            <div className="text-xl font-bold flex gap-8 items-center flex-1">
+                <Link href="/" className="hover:opacity-80 transition-opacity">Scanner AI</Link>
+                {user && (
+                    <Link 
+                        href="/receipts" 
+                        className="text-sm font-medium opacity-70 hover:opacity-100 transition-opacity"
+                    >
+                        My Receipts
+                    </Link>
+                )}
             </div>
             
             <div className="flex items-center gap-6">
