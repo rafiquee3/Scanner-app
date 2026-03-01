@@ -1,6 +1,8 @@
 "use server";
 
 import { GoogleGenAI } from "@google/genai";
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
 export async function scanImageAction(formData: FormData) {
   const file = formData.get("image") as File;
@@ -55,4 +57,58 @@ export async function scanImageAction(formData: FormData) {
     console.error("Gemini Scan Error:", error);
     return { error: `Error during scanning: ${error.message || "Unknown error"}` };
   }
+}
+
+export async function saveReceiptAction(items: any[], total: string, date: string) {
+    const cookieStore = await cookies();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll();
+          },
+          setAll(cookiesToSet) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options)
+              );
+            } catch (error) {
+              // The `setAll` method was called from a Server Component.
+              // This can be ignored if you have middleware refreshing
+              // user sessions.
+            }
+          },
+        },
+      }
+    );
+  
+  // Get the current user
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Musisz być zalogowany!");
+  // 1. Save receipt header
+  const { data: receipt, error: rError } = await supabase
+    .from('receipts')
+    .insert({
+      user_id: user.id,
+      total: parseFloat(total),
+      date: date || null
+    })
+    .select()
+    .single();
+  if (rError) throw rError;
+  // 2. Save items
+  const itemsToInsert = items
+    .filter(item => item.name)
+    .map(item => ({
+      receipt_id: receipt.id,
+      name: item.name,
+      price: parseFloat(item.price) || 0
+    }));
+  const { error: iError } = await supabase
+    .from('receipt_items')
+    .insert(itemsToInsert);
+  if (iError) throw iError;
+  return { success: true };
 }
