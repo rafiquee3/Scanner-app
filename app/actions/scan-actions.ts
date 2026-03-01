@@ -30,7 +30,7 @@ export async function scanImageAction(formData: FormData) {
       "Meat", "Fish & Seafood", "Fruits", "Vegetables", "Drinks", "Other Food", "Household", "Alcohol", "Other"
       
       Round the price property to two decimal places.
-      As the last record, extract the date visible on the receipt and add it as: {"date": string}
+      As the last record, extract the date visible on the receipt and add it as: {"date": "YYYY-MM-DD"} using ISO format.
     `;
 
     console.log("Calling Gemini API with model gemini-2.5-flash...");
@@ -72,13 +72,24 @@ export async function saveReceiptAction(items: any[], total: string, date: strin
   // Get the current user
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Musisz być zalogowany!");
-  // 1. Save receipt header
+  // 1. Validate and format date
+  let cleanDate = null;
+  if (date) {
+    const d = new Date(date);
+    if (!isNaN(d.getTime())) {
+      cleanDate = d.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    } else {
+      console.warn("Invalid date received from model:", date);
+    }
+  }
+
+  // 2. Save receipt header
   const { data: receipt, error: rError } = await supabase
     .from('receipts')
     .insert({
       user_id: user.id,
       total: parseFloat(total),
-      date: date || null
+      date: cleanDate
     })
     .select()
     .single();
@@ -136,6 +147,89 @@ export async function deleteReceiptAction(receiptId: string) {
   if (error) {
     console.error('Error deleting receipt:', error);
     throw error;
+  }
+
+  return { success: true };
+}
+
+export async function getReceiptByIdAction(receiptId: string) {
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+
+  const { data, error } = await supabase
+    .from('receipts')
+    .select(`
+      *,
+      receipt_items (*)
+    `)
+    .eq('id', receiptId)
+    .eq('user_id', user.id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching receipt:', error);
+    return { error: error.message };
+  }
+
+  return { data };
+}
+
+export async function updateReceiptAction(
+  receiptId: string,
+  items: any[],
+  total: string,
+  date: string | null
+) {
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  // Validate date
+  let cleanDate = null;
+  if (date) {
+    const d = new Date(date);
+    if (!isNaN(d.getTime())) {
+      cleanDate = d.toISOString().split('T')[0];
+    }
+  }
+
+  // Update receipt header
+  const { error: rError } = await supabase
+    .from('receipts')
+    .update({
+      total: parseFloat(total),
+      date: cleanDate,
+    })
+    .eq('id', receiptId)
+    .eq('user_id', user.id);
+
+  if (rError) throw rError;
+
+  // Delete old items and insert new ones
+  const { error: delError } = await supabase
+    .from('receipt_items')
+    .delete()
+    .eq('receipt_id', receiptId);
+
+  if (delError) throw delError;
+
+  const itemsToInsert = items
+    .filter(item => item.name)
+    .map(item => ({
+      receipt_id: receiptId,
+      name: item.name,
+      price: parseFloat(item.price) || 0,
+      category: item.category || 'Other',
+    }));
+
+  if (itemsToInsert.length > 0) {
+    const { error: iError } = await supabase
+      .from('receipt_items')
+      .insert(itemsToInsert);
+    if (iError) throw iError;
   }
 
   return { success: true };

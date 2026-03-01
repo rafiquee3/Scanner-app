@@ -37,8 +37,8 @@ export default function RootLayout({
       >
         <Providers>
           <MSWProvider>
-          <Header/>
-          {children}
+            <Header/>
+            {children}
           </MSWProvider>
         </Providers>
       </body>
