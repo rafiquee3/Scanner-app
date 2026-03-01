@@ -1,10 +1,24 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { getReceiptsAction } from "../actions/scan-actions";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getReceiptsAction, deleteReceiptAction } from "../actions/scan-actions";
 import Link from "next/link";
 
+const CATEGORY_COLORS: Record<string, string> = {
+  "Meat": "bg-red-100 text-red-700",
+  "Fish & Seafood": "bg-cyan-100 text-cyan-700",
+  "Fruits": "bg-orange-100 text-orange-700",
+  "Vegetables": "bg-green-100 text-green-700",
+  "Drinks": "bg-blue-100 text-blue-700",
+  "Other Food": "bg-yellow-100 text-yellow-700",
+  "Household": "bg-purple-100 text-purple-700",
+  "Alcohol": "bg-pink-100 text-pink-700",
+  "Other": "bg-gray-100 text-gray-700",
+};
+
 export default function ReceiptsPage() {
+  const queryClient = useQueryClient();
+
   const { data: receipts = [], isLoading, isError, error: queryError } = useQuery({
     queryKey: ['receipts'],
     queryFn: async () => {
@@ -15,6 +29,22 @@ export default function ReceiptsPage() {
     staleTime: 60 * 1000, 
     gcTime: 5 * 60 * 1000, 
   });
+
+  const { mutate: deleteMutate, isPending: isDeleting } = useMutation({
+    mutationFn: (receiptId: string) => deleteReceiptAction(receiptId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['receipts'] });
+    },
+    onError: (err: any) => {
+      alert("Error deleting: " + err.message);
+    }
+  });
+
+  const handleDelete = (receiptId: string) => {
+    if (confirm("Are you sure you want to delete this receipt?")) {
+      deleteMutate(receiptId);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -68,22 +98,46 @@ export default function ReceiptsPage() {
                     <p className="text-sm text-gray-500 mb-1">{new Date(receipt.date || receipt.created_at).toLocaleDateString()}</p>
                     <h3 className="text-xl font-bold text-gray-900">{receipt.total.toFixed(2)} PLN</h3>
                   </div>
-                  <span className="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                    {receipt.receipt_items?.length || 0} items
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                      {receipt.receipt_items?.length || 0} items
+                    </span>
+                    <button
+                      onClick={() => handleDelete(receipt.id)}
+                      disabled={isDeleting}
+                      className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer disabled:opacity-50"
+                      title="Delete receipt"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 6h18" />
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
                 
                 <div className="border-t border-gray-50 pt-4">
                   <ul className="space-y-2">
-                    {receipt.receipt_items?.slice(0, 3).map((item: any) => (
-                      <li key={item.id} className="flex justify-between text-sm text-gray-600">
-                        <span>{item.name}</span>
-                        <span className="font-medium">{item.price.toFixed(2)} PLN</span>
-                      </li>
-                    ))}
-                    {receipt.receipt_items?.length > 3 && (
+                    {receipt.receipt_items
+                      ?.sort((a: any, b: any) => (a.category || "Other").localeCompare(b.category || "Other"))
+                      .slice(0, 5)
+                      .map((item: any) => (
+                        <li key={item.id} className="flex items-center justify-between text-sm text-gray-600">
+                          <div className="flex items-center gap-2">
+                            <span>{item.name}</span>
+                            {item.category && (
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${CATEGORY_COLORS[item.category] || CATEGORY_COLORS["Other"]}`}>
+                                {item.category}
+                              </span>
+                            )}
+                          </div>
+                          <span className="font-medium">{item.price.toFixed(2)} PLN</span>
+                        </li>
+                      ))}
+                    {receipt.receipt_items?.length > 5 && (
                       <li className="text-xs text-gray-400 italic">
-                        + {receipt.receipt_items.length - 3} more items...
+                        + {receipt.receipt_items.length - 5} more items...
                       </li>
                     )}
                   </ul>

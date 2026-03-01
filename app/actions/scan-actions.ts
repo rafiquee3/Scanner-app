@@ -22,7 +22,15 @@ export async function scanImageAction(formData: FormData) {
     const base64Data = Buffer.from(bytes).toString("base64");
 
      const prompt = `
-      przeprowadz analize zalaczonego zdjecia paragonu i wyciagnij z niego zakupione produkty, a nastepnie zwrocic odpowiedz jako czysty json o podanym formacie [{"name": string, "price": number}] i jako ostatni rekord wyciagniesz ze zdjecia date widoczna na paragonie i dodasz [{"date": string}, wlasciwosc price zaokraglaj do dwoch miejsc po przecinku]
+      Analyze the attached receipt image and extract all purchased products.
+      Return the response as pure JSON in the following format:
+      [{"name": string, "price": number, "category": string}]
+      
+      Each product must be assigned to exactly one of these categories:
+      "Meat", "Fish & Seafood", "Fruits", "Vegetables", "Drinks", "Other Food", "Household", "Alcohol", "Other"
+      
+      Round the price property to two decimal places.
+      As the last record, extract the date visible on the receipt and add it as: {"date": string}
     `;
 
     console.log("Calling Gemini API with model gemini-2.5-flash...");
@@ -81,7 +89,8 @@ export async function saveReceiptAction(items: any[], total: string, date: strin
     .map(item => ({
       receipt_id: receipt.id,
       name: item.name,
-      price: parseFloat(item.price) || 0
+      price: parseFloat(item.price) || 0,
+      category: item.category || 'Other'
     }));
   const { error: iError } = await supabase
     .from('receipt_items')
@@ -110,4 +119,24 @@ export async function getReceiptsAction() {
   }
 
   return { data };
+}
+
+export async function deleteReceiptAction(receiptId: string) {
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const { error } = await supabase
+    .from('receipts')
+    .delete()
+    .eq('id', receiptId)
+    .eq('user_id', user.id);
+
+  if (error) {
+    console.error('Error deleting receipt:', error);
+    throw error;
+  }
+
+  return { success: true };
 }
