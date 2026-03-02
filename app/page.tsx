@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { scanImageAction, saveReceiptAction } from "./actions/scan-actions";
 import ReceiptEditor from "@/src/components/ReceiptEditor";
+import { toast } from 'sonner';
 
 export default function ScannerPage() {
   const queryClient = useQueryClient();
@@ -55,10 +56,11 @@ export default function ScannerPage() {
         queryClient.invalidateQueries({ queryKey: ["receipts"] });
         router.push("/receipts");
         setItems([]);
+        toast.success("Receipt saved to your list");
       }
     },
     onError: (err: any) => {
-      alert("Error saving: " + err.message);
+      toast.error("Could not save the receipt");
     },
   });
 
@@ -70,6 +72,7 @@ export default function ScannerPage() {
   const handleDeleteItem = (index: number) => {
     const itemToDelete = productItems[index];
     setItems(items.filter((item) => item !== itemToDelete));
+    toast.error("Product removed from list");
   };
 
   const handleUpdateItem = (index: number, field: string, value: string) => {
@@ -105,6 +108,7 @@ export default function ScannerPage() {
         <input
           type="file"
           accept="image/* .pdf"
+          capture="environment" 
           onChange={handleFileChange}
           disabled={isScanning}
           className="cursor-pointer"

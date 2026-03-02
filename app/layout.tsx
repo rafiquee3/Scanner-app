@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import { Header } from "@/src/components/Header";
 import Footer from "@/src/components/Footer";
 import { MSWProvider } from "@/src/mocks/msw-provider";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,8 +18,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Scanner App",
+  title: "Scanner AI",
   description: "Receipt scanner powered by Gemini",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Scanner AI",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#2563eb",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 if (process.env.NODE_ENV === "development" && typeof window === "undefined") {
@@ -35,13 +49,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
-          <MSWProvider>
+       
             <div className="min-h-screen flex flex-col">
               <Header />
               <main className="flex-grow">{children}</main>
               <Footer />
+              <Toaster position="bottom-right" richColors/>
             </div>
-          </MSWProvider>
+         
         </Providers>
       </body>
     </html>

@@ -81,7 +81,7 @@ export default function ReceiptsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <h1 className="text-3xl font-bold font-outfit">My Receipts</h1>
         <div className="flex items-center gap-3">
-          <div className="flex bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-all shadow-sm active:scale-95 shrink-0">
+          <div className="flex bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-all shadow-sm active:scale-95 shrink-0 overflow-hidden">
             <select
               value={selectedYear}
               onChange={(e) => {
@@ -89,16 +89,16 @@ export default function ReceiptsPage() {
                 setSelectedYear(val === "all" ? "all" : parseInt(val));
                 if (val === "all") setSelectedMonth("all"); // Reset month if year is 'all'
               }}
-              className="bg-transparent text-sm font-semibold px-3 py-1.5 focus:outline-none cursor-pointer"
+              className="bg-transparent text-sm font-semibold px-4 py-2.5 focus:outline-none cursor-pointer appearance-none"
             >
               <option value="all">All Years</option>
               {years.map((y) => (
-                <option key={y} value={y}>
+                <option key={y} value={y} className="text-black">
                   {y}
                 </option>
               ))}
             </select>
-            <div className="w-px bg-gray-300 my-1"></div>
+            <div className="w-px bg-blue-500/50 my-2"></div>
             <select
               value={selectedMonth}
               onChange={(e) => {
@@ -106,11 +106,11 @@ export default function ReceiptsPage() {
                 setSelectedMonth(val === "all" ? "all" : parseInt(val));
               }}
               disabled={selectedYear === "all"}
-              className="bg-transparent text-sm font-semibold px-3 py-1.5 focus:outline-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              className="bg-transparent text-sm font-semibold px-4 py-2.5 focus:outline-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed appearance-none"
             >
               <option value="all">All Months</option>
               {MONTHS.map((m) => (
-                <option key={m.value} value={m.value}>
+                <option key={m.value} value={m.value} className="text-black">
                   {m.label}
                 </option>
               ))}
@@ -118,7 +118,7 @@ export default function ReceiptsPage() {
           </div>
           <Link
             href="/"
-            className="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-all shadow-sm active:scale-95 shrink-0"
+            className="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-all shadow-sm active:scale-95 shrink-0 whitespace-nowrap"
           >
             + New Scan
           </Link>

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/src/utils/supabase";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
+import { toast } from 'sonner';
 
 export function Header() {
   const [user, setUser] = useState<User | null>(null);
@@ -33,6 +34,7 @@ export function Header() {
     await supabase.auth.signOut();
     router.push("/");
     router.refresh();
+    toast.success("User logged out successfully");
   };
 
   return (

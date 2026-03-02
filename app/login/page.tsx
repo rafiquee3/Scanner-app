@@ -1,6 +1,7 @@
 "use client";
 
 import { supabase } from "@/src/utils/supabase";
+import { toast } from 'sonner';
 
 export default function LoginPage() {
   const handleGoogleLogin = async () => {
@@ -12,8 +13,9 @@ export default function LoginPage() {
     });
 
     if (error) {
+      toast.error("Problem logging in the user");
       console.error("Login error:", error.message);
-    }
+    } 
   };
 
   const handleGitHubLogin = async () => {
@@ -25,12 +27,13 @@ export default function LoginPage() {
     });
 
     if (error) {
+      toast.error("Problem logging in the user");
       console.error("Login error:", error.message);
-    }
+    } 
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 flex-col p-4">
+    <div className="min-h-screen flex items-center justify-center flex-col p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
