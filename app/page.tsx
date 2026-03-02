@@ -82,7 +82,24 @@ export default function ScannerPage() {
 
   return (
     <div className="p-8 max-w-lg mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Smart Scanner</h1>
+      <h1 className="text-2xl font-bold mb-6 flex items-center gap-3">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="28"
+          height="28"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-blue-600"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.3-4.3" />
+        </svg>
+        Smart Scanner
+      </h1>
 
       <div className="mb-6 p-4 border-2 border-dashed rounded-lg text-center">
         <input

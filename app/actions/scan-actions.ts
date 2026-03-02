@@ -2,6 +2,7 @@
 
 import { GoogleGenAI } from "@google/genai";
 import { createClient } from "@/src/utils/supabase-server";
+import { CATEGORIES } from "@/src/utils/constants";
 
 export async function scanImageAction(formData: FormData) {
   const file = formData.get("image") as File;
@@ -27,7 +28,7 @@ export async function scanImageAction(formData: FormData) {
       [{"name": string, "price": number, "category": string}]
       
       Each product must be assigned to exactly one of these categories:
-      "Meat", "Fish & Seafood", "Fruits", "Vegetables", "Drinks", "Other Food", "Household", "Alcohol", "Other"
+      ${CATEGORIES.map((c: string) => `"${c}"`).join(", ")}
       
       Round the price property to two decimal places.
       As the last record, extract the date visible on the receipt and add it as: {"date": "YYYY-MM-DD"} using ISO format.
@@ -105,7 +106,9 @@ export async function saveReceiptAction(items: any[], total: string, date: strin
       price: parseFloat(item.price) || 0,
       category: item.category || "Other",
     }));
+
   const { error: iError } = await supabase.from("receipt_items").insert(itemsToInsert);
+
   if (iError) throw iError;
   return { success: true };
 }
@@ -121,7 +124,7 @@ export async function getReceiptsAction(year?: number, month?: number) {
   let query = supabase
     .from("receipts")
     .select("*, receipt_items(*)")
-    .eq("user_id", user.id)
+    .eq("user_id", user.id) // RLS Row Level Security
     .order("date", { ascending: false });
 
   if (year) {

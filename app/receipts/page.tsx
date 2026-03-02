@@ -4,33 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getReceiptsAction, deleteReceiptAction } from "../actions/scan-actions";
 import Link from "next/link";
-
-const CATEGORY_COLORS: Record<string, string> = {
-  Meat: "bg-red-100 text-red-700",
-  "Fish & Seafood": "bg-cyan-100 text-cyan-700",
-  Fruits: "bg-orange-100 text-orange-700",
-  Vegetables: "bg-green-100 text-green-700",
-  Drinks: "bg-blue-100 text-blue-700",
-  "Other Food": "bg-yellow-100 text-yellow-700",
-  Household: "bg-purple-100 text-purple-700",
-  Alcohol: "bg-pink-100 text-pink-700",
-  Other: "bg-gray-100 text-gray-700",
-};
-
-const MONTHS = [
-  { value: 1, label: "January" },
-  { value: 2, label: "February" },
-  { value: 3, label: "March" },
-  { value: 4, label: "April" },
-  { value: 5, label: "May" },
-  { value: 6, label: "June" },
-  { value: 7, label: "July" },
-  { value: 8, label: "August" },
-  { value: 9, label: "September" },
-  { value: 10, label: "October" },
-  { value: 11, label: "November" },
-  { value: 12, label: "December" },
-];
+import { CATEGORY_COLORS, MONTHS } from "@/src/utils/constants";
 
 export default function ReceiptsPage() {
   const queryClient = useQueryClient();
