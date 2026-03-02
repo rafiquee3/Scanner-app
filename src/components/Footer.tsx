@@ -6,7 +6,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="mt-auto border-t border-gray-800 bg-black">
+    <footer className="mt-auto border-t border-gray-800 bg-[#1E2938]">
       <div className="max-w-4xl mx-auto px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
           <div className="space-y-4">
@@ -32,7 +32,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-gray-500 text-xs">
-              © {currentYear} Smart Scanner. All rights reserved.
+              © {currentYear} Smart Scanner
             </p>
           </div>
 

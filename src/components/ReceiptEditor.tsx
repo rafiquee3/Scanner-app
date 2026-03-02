@@ -61,16 +61,33 @@ export default function ReceiptEditor({
       {sortedItems.map(({ item, originalIndex }) => (
         <div
           key={item.id || originalIndex}
-          className={`p-3 bg-white rounded-md text-black space-y-2 border-l-[5px] ${CATEGORY_BORDER_COLORS[item.category] || CATEGORY_BORDER_COLORS["Other"]}`}
+          className={`p-3 bg-white rounded-md text-black flex items-center justify-between border-l-[5px] ${CATEGORY_BORDER_COLORS[item.category] || CATEGORY_BORDER_COLORS["Other"]}`}
         >
-          <div className="flex items-center justify-between gap-2">
+          {/* Left: Name and Category */}
+          <div className="flex-1 min-w-0 flex flex-col gap-2">
             <input
               type="text"
               value={item.name}
               onChange={(e) => onUpdateItem(originalIndex, "name", e.target.value)}
-              className="bg-transparent border-none focus:ring-1 focus:ring-blue-400 rounded px-1 flex-1 min-w-0 outline-none"
+              className="bg-transparent border-none focus:ring-1 focus:ring-blue-400 rounded px-1 w-full font-medium outline-none"
+              placeholder="Product name"
             />
-            <div className="flex items-center gap-1 shrink-0">
+            <select
+              value={item.category || "Other"}
+              onChange={(e) => onUpdateItem(originalIndex, "category", e.target.value)}
+              className={`text-[10px] w-fit font-bold px-2 py-0.5 rounded-full cursor-pointer border-none outline-none ${CATEGORY_COLORS[item.category] || CATEGORY_COLORS["Other"]}`}
+            >
+              {CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Right: Price and Delete button - centered vertically */}
+          <div className="flex items-center gap-3 shrink-0 ml-4">
+            <div className="flex items-center gap-1">
               <input
                 type="number"
                 step="0.01"
@@ -80,7 +97,11 @@ export default function ReceiptEditor({
               />
               <span className="font-bold whitespace-nowrap">PLN</span>
             </div>
-            <button onClick={() => onDeleteItem(originalIndex)}>
+            <button
+              onClick={() => onDeleteItem(originalIndex)}
+              className="flex items-center justify-center p-2 hover:bg-red-50 rounded-full transition-colors group"
+              title="Delete item"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -91,7 +112,7 @@ export default function ReceiptEditor({
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-red-500 hover:text-red-700 cursor-pointer shrink-0 ml-1"
+                className="text-red-400 group-hover:text-red-600 transition-colors"
               >
                 <path d="M3 6h18" />
                 <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
@@ -101,17 +122,6 @@ export default function ReceiptEditor({
               </svg>
             </button>
           </div>
-          <select
-            value={item.category || "Other"}
-            onChange={(e) => onUpdateItem(originalIndex, "category", e.target.value)}
-            className={`text-xs font-bold px-2 py-1 rounded-full cursor-pointer border-none outline-none ${CATEGORY_COLORS[item.category] || CATEGORY_COLORS["Other"]}`}
-          >
-            {CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
         </div>
       ))}
 
