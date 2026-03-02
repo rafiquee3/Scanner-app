@@ -1,43 +1,74 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getReceiptsAction, deleteReceiptAction } from "../actions/scan-actions";
 import Link from "next/link";
 
 const CATEGORY_COLORS: Record<string, string> = {
-  "Meat": "bg-red-100 text-red-700",
+  Meat: "bg-red-100 text-red-700",
   "Fish & Seafood": "bg-cyan-100 text-cyan-700",
-  "Fruits": "bg-orange-100 text-orange-700",
-  "Vegetables": "bg-green-100 text-green-700",
-  "Drinks": "bg-blue-100 text-blue-700",
+  Fruits: "bg-orange-100 text-orange-700",
+  Vegetables: "bg-green-100 text-green-700",
+  Drinks: "bg-blue-100 text-blue-700",
   "Other Food": "bg-yellow-100 text-yellow-700",
-  "Household": "bg-purple-100 text-purple-700",
-  "Alcohol": "bg-pink-100 text-pink-700",
-  "Other": "bg-gray-100 text-gray-700",
+  Household: "bg-purple-100 text-purple-700",
+  Alcohol: "bg-pink-100 text-pink-700",
+  Other: "bg-gray-100 text-gray-700",
 };
+
+const MONTHS = [
+  { value: 1, label: "January" },
+  { value: 2, label: "February" },
+  { value: 3, label: "March" },
+  { value: 4, label: "April" },
+  { value: 5, label: "May" },
+  { value: 6, label: "June" },
+  { value: 7, label: "July" },
+  { value: 8, label: "August" },
+  { value: 9, label: "September" },
+  { value: 10, label: "October" },
+  { value: 11, label: "November" },
+  { value: 12, label: "December" },
+];
 
 export default function ReceiptsPage() {
   const queryClient = useQueryClient();
 
-  const { data: receipts = [], isLoading, isError, error: queryError } = useQuery({
-    queryKey: ['receipts'],
+  const [selectedYear, setSelectedYear] = useState<number | "all">("all");
+  const [selectedMonth, setSelectedMonth] = useState<number | "all">("all");
+
+  const {
+    data: receipts = [],
+    isLoading,
+    isError,
+    error: queryError,
+  } = useQuery({
+    queryKey: ["receipts", selectedYear, selectedMonth],
     queryFn: async () => {
-      const result = await getReceiptsAction();
-      if ('error' in result) throw new Error(result.error as string);
+      const result = await getReceiptsAction(
+        selectedYear === "all" ? undefined : selectedYear,
+        selectedMonth === "all" ? undefined : selectedMonth
+      );
+      if ("error" in result) throw new Error(result.error as string);
       return result.data || [];
     },
-    staleTime: 60 * 1000, 
-    gcTime: 5 * 60 * 1000, 
+    staleTime: 60 * 1000,
+    gcTime: 5 * 60 * 1000,
   });
+
+  // Generate years: from 2024 to current year
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: currentYear - 2024 + 1 }, (_, i) => 2024 + i).reverse();
 
   const { mutate: deleteMutate, isPending: isDeleting } = useMutation({
     mutationFn: (receiptId: string) => deleteReceiptAction(receiptId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['receipts'] });
+      queryClient.invalidateQueries({ queryKey: ["receipts"] });
     },
     onError: (err: any) => {
       alert("Error deleting: " + err.message);
-    }
+    },
   });
 
   const handleDelete = (receiptId: string) => {
@@ -60,7 +91,7 @@ export default function ReceiptsPage() {
         <div className="bg-red-50 text-red-600 p-6 rounded-2xl border border-red-100">
           <h2 className="text-xl font-bold mb-2">Failed to load receipts</h2>
           <p className="mb-4">{(queryError as Error).message}</p>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors"
           >
@@ -73,20 +104,59 @@ export default function ReceiptsPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-8">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <h1 className="text-3xl font-bold font-outfit">My Receipts</h1>
-        <Link 
-          href="/" 
-          className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm"
-        >
-          + New Scan
-        </Link>
+        <div className="flex items-center gap-3">
+          <div className="flex bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-all shadow-sm active:scale-95 shrink-0">
+            <select
+              value={selectedYear}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSelectedYear(val === "all" ? "all" : parseInt(val));
+                if (val === "all") setSelectedMonth("all"); // Reset month if year is 'all'
+              }}
+              className="bg-transparent text-sm font-semibold px-3 py-1.5 focus:outline-none cursor-pointer"
+            >
+              <option value="all">All Years</option>
+              {years.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+            <div className="w-px bg-gray-300 my-1"></div>
+            <select
+              value={selectedMonth}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSelectedMonth(val === "all" ? "all" : parseInt(val));
+              }}
+              disabled={selectedYear === "all"}
+              className="bg-transparent text-sm font-semibold px-3 py-1.5 focus:outline-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <option value="all">All Months</option>
+              {MONTHS.map((m) => (
+                <option key={m.value} value={m.value}>
+                  {m.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <Link
+            href="/"
+            className="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-all shadow-sm active:scale-95 shrink-0"
+          >
+            + New Scan
+          </Link>
+        </div>
       </div>
 
       {receipts.length === 0 ? (
         <div className="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
           <p className="text-gray-500 mb-4 text-lg">You haven't saved any receipts yet.</p>
-          <Link href="/" className="text-blue-600 font-bold hover:underline">Scan your first receipt now →</Link>
+          <Link href="/" className="text-blue-600 font-bold hover:underline">
+            Scan your first receipt now →
+          </Link>
         </div>
       ) : (
         <div className="grid gap-6">
@@ -96,20 +166,38 @@ export default function ReceiptsPage() {
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <p className="text-sm text-gray-500 mb-1">{new Date(receipt.date || receipt.created_at).toLocaleDateString()}</p>
-                      <h3 className="text-xl font-bold text-gray-900">{receipt.total.toFixed(2)} PLN</h3>
+                      <p className="text-sm text-gray-500 mb-1">
+                        {new Date(receipt.date || receipt.created_at).toLocaleDateString()}
+                      </p>
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {receipt.total.toFixed(2)} PLN
+                      </h3>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                         {receipt.receipt_items?.length || 0} items
                       </span>
                       <button
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDelete(receipt.id); }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleDelete(receipt.id);
+                        }}
                         disabled={isDeleting}
                         className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer disabled:opacity-50"
                         title="Delete receipt"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <path d="M3 6h18" />
                           <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
                           <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
@@ -117,18 +205,25 @@ export default function ReceiptsPage() {
                       </button>
                     </div>
                   </div>
-                
+
                   <div className="border-t border-gray-50 pt-4">
                     <ul className="space-y-2">
                       {receipt.receipt_items
-                        ?.sort((a: any, b: any) => (a.category || "Other").localeCompare(b.category || "Other"))
+                        ?.sort((a: any, b: any) =>
+                          (a.category || "Other").localeCompare(b.category || "Other")
+                        )
                         .slice(0, 3)
                         .map((item: any) => (
-                          <li key={item.id} className="flex items-center justify-between text-sm text-gray-600">
+                          <li
+                            key={item.id}
+                            className="flex items-center justify-between text-sm text-gray-600"
+                          >
                             <div className="flex items-center gap-2">
                               <span>{item.name}</span>
                               {item.category && (
-                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${CATEGORY_COLORS[item.category] || CATEGORY_COLORS["Other"]}`}>
+                                <span
+                                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${CATEGORY_COLORS[item.category] || CATEGORY_COLORS["Other"]}`}
+                                >
                                   {item.category}
                                 </span>
                               )}
@@ -146,7 +241,6 @@ export default function ReceiptsPage() {
                 </div>
               </div>
             </Link>
-
           ))}
         </div>
       )}

@@ -16,10 +16,10 @@ export default function ReceiptDetailPage() {
   const [initialized, setInitialized] = useState(false);
 
   const { isLoading, isError, error } = useQuery({
-    queryKey: ['receipt', id],
+    queryKey: ["receipt", id],
     queryFn: async () => {
       const result = await getReceiptByIdAction(id);
-      if ('error' in result) throw new Error(result.error as string);
+      if ("error" in result) throw new Error(result.error as string);
       return result.data;
     },
     staleTime: 60 * 1000,
@@ -28,10 +28,10 @@ export default function ReceiptDetailPage() {
 
   // Initialize local state from query data (only once)
   const { data: receiptData } = useQuery({
-    queryKey: ['receipt', id],
+    queryKey: ["receipt", id],
     queryFn: async () => {
       const result = await getReceiptByIdAction(id);
-      if ('error' in result) throw new Error(result.error as string);
+      if ("error" in result) throw new Error(result.error as string);
       return result.data;
     },
     staleTime: 60 * 1000,
@@ -44,18 +44,20 @@ export default function ReceiptDetailPage() {
     setInitialized(true);
   }
 
-  const total = items.reduce((acc, val) => {
-    const price = typeof val.price === 'string' ? parseFloat(val.price) : val.price;
-    return acc + (price || 0);
-  }, 0).toFixed(2);
+  const total = items
+    .reduce((acc, val) => {
+      const price = typeof val.price === "string" ? parseFloat(val.price) : val.price;
+      return acc + (price || 0);
+    }, 0)
+    .toFixed(2);
 
   const { mutate: updateMutate, isPending: isUpdating } = useMutation({
     mutationFn: async () => {
       return await updateReceiptAction(id, items, total, date);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['receipts'] });
-      queryClient.invalidateQueries({ queryKey: ['receipt', id] });
+      queryClient.invalidateQueries({ queryKey: ["receipts"] });
+      queryClient.invalidateQueries({ queryKey: ["receipt", id] });
       router.push("/receipts");
     },
     onError: (err: any) => {

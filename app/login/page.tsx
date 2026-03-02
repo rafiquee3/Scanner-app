@@ -16,7 +16,7 @@ export default function LoginPage() {
     }
   };
 
-    const handleGitHubLogin = async () => {
+  const handleGitHubLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
@@ -80,8 +80,11 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
-      
-      <a href="/" className="mt-6 text-gray-500 hover:text-gray-800 transition-colors text-sm font-medium">
+
+      <a
+        href="/"
+        className="mt-6 text-gray-500 hover:text-gray-800 transition-colors text-sm font-medium"
+      >
         ← Back to Scanner
       </a>
     </div>

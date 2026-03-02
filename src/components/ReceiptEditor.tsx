@@ -3,32 +3,39 @@
 import { useState } from "react";
 
 const CATEGORIES = [
-  "Meat", "Fish & Seafood", "Fruits", "Vegetables", "Drinks",
-  "Other Food", "Household", "Alcohol", "Other"
+  "Meat",
+  "Fish & Seafood",
+  "Fruits",
+  "Vegetables",
+  "Drinks",
+  "Other Food",
+  "Household",
+  "Alcohol",
+  "Other",
 ] as const;
 
 const CATEGORY_COLORS: Record<string, string> = {
-  "Meat": "bg-red-100 text-red-700",
+  Meat: "bg-red-100 text-red-700",
   "Fish & Seafood": "bg-cyan-100 text-cyan-700",
-  "Fruits": "bg-orange-100 text-orange-700",
-  "Vegetables": "bg-green-100 text-green-700",
-  "Drinks": "bg-blue-100 text-blue-700",
+  Fruits: "bg-orange-100 text-orange-700",
+  Vegetables: "bg-green-100 text-green-700",
+  Drinks: "bg-blue-100 text-blue-700",
   "Other Food": "bg-yellow-100 text-yellow-700",
-  "Household": "bg-purple-100 text-purple-700",
-  "Alcohol": "bg-pink-100 text-pink-700",
-  "Other": "bg-gray-100 text-gray-700",
+  Household: "bg-purple-100 text-purple-700",
+  Alcohol: "bg-pink-100 text-pink-700",
+  Other: "bg-gray-100 text-gray-700",
 };
 
 const CATEGORY_BORDER_COLORS: Record<string, string> = {
-  "Meat": "border-l-red-500",
+  Meat: "border-l-red-500",
   "Fish & Seafood": "border-l-cyan-500",
-  "Fruits": "border-l-orange-500",
-  "Vegetables": "border-l-green-500",
-  "Drinks": "border-l-blue-500",
+  Fruits: "border-l-orange-500",
+  Vegetables: "border-l-green-500",
+  Drinks: "border-l-blue-500",
   "Other Food": "border-l-yellow-500",
-  "Household": "border-l-purple-500",
-  "Alcohol": "border-l-pink-500",
-  "Other": "border-l-gray-400",
+  Household: "border-l-purple-500",
+  Alcohol: "border-l-pink-500",
+  Other: "border-l-gray-400",
 };
 
 export interface Product {
@@ -61,14 +68,16 @@ export default function ReceiptEditor({
 }: ReceiptEditorProps) {
   const [showDetails, setShowDetails] = useState(false);
 
-  const total = items.reduce((acc, val) => {
-    const price = typeof val.price === 'string' ? parseFloat(val.price) : val.price;
-    return acc + (price || 0);
-  }, 0).toFixed(2);
+  const total = items
+    .reduce((acc, val) => {
+      const price = typeof val.price === "string" ? parseFloat(val.price) : val.price;
+      return acc + (price || 0);
+    }, 0)
+    .toFixed(2);
 
   const handlePriceChange = (index: number, value: string) => {
     if (value !== "" && !/^\d*\.?\d{0,2}$/.test(value)) return;
-    onUpdateItem(index, 'price', value);
+    onUpdateItem(index, "price", value);
   };
 
   if (items.length === 0) return null;
@@ -81,15 +90,15 @@ export default function ReceiptEditor({
   return (
     <div className="space-y-2">
       {sortedItems.map(({ item, originalIndex }) => (
-        <div 
-          key={item.id || originalIndex} 
+        <div
+          key={item.id || originalIndex}
           className={`p-3 bg-white rounded-md text-black space-y-2 border-l-[5px] ${CATEGORY_BORDER_COLORS[item.category] || CATEGORY_BORDER_COLORS["Other"]}`}
         >
           <div className="flex items-center justify-between gap-2">
             <input
               type="text"
               value={item.name}
-              onChange={(e) => onUpdateItem(originalIndex, 'name', e.target.value)}
+              onChange={(e) => onUpdateItem(originalIndex, "name", e.target.value)}
               className="bg-transparent border-none focus:ring-1 focus:ring-blue-400 rounded px-1 flex-1 min-w-0 outline-none"
             />
             <div className="flex items-center gap-1 shrink-0">
@@ -125,11 +134,13 @@ export default function ReceiptEditor({
           </div>
           <select
             value={item.category || "Other"}
-            onChange={(e) => onUpdateItem(originalIndex, 'category', e.target.value)}
+            onChange={(e) => onUpdateItem(originalIndex, "category", e.target.value)}
             className={`text-xs font-bold px-2 py-1 rounded-full cursor-pointer border-none outline-none ${CATEGORY_COLORS[item.category] || CATEGORY_COLORS["Other"]}`}
           >
-            {CATEGORIES.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
+            {CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
             ))}
           </select>
         </div>
@@ -151,7 +162,7 @@ export default function ReceiptEditor({
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className={`transition-transform ${showDetails ? 'rotate-180' : ''}`}
+          className={`transition-transform ${showDetails ? "rotate-180" : ""}`}
         >
           <path d="M6 9l6 6 6-6" />
         </svg>
@@ -162,7 +173,7 @@ export default function ReceiptEditor({
           {Object.entries(
             items.reduce<Record<string, number>>((acc, item) => {
               const cat = item.category || "Other";
-              const price = typeof item.price === 'string' ? parseFloat(item.price) : item.price;
+              const price = typeof item.price === "string" ? parseFloat(item.price) : item.price;
               acc[cat] = (acc[cat] || 0) + (price || 0);
               return acc;
             }, {})
@@ -171,9 +182,11 @@ export default function ReceiptEditor({
             .map(([category, categoryTotal], i, arr) => (
               <div
                 key={category}
-                className={`flex justify-between items-center p-3 border-l-[5px] ${CATEGORY_BORDER_COLORS[category] || CATEGORY_BORDER_COLORS["Other"]} ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}
+                className={`flex justify-between items-center p-3 border-l-[5px] ${CATEGORY_BORDER_COLORS[category] || CATEGORY_BORDER_COLORS["Other"]} ${i < arr.length - 1 ? "border-b border-gray-100" : ""}`}
               >
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${CATEGORY_COLORS[category] || CATEGORY_COLORS["Other"]}`}>
+                <span
+                  className={`text-xs font-bold px-2 py-0.5 rounded-full ${CATEGORY_COLORS[category] || CATEGORY_COLORS["Other"]}`}
+                >
                   {category}
                 </span>
                 <span className="font-bold text-black">{categoryTotal.toFixed(2)} PLN</span>
@@ -196,14 +209,14 @@ export default function ReceiptEditor({
             <button
               onClick={onSave}
               disabled={isSaving}
-              className={`${onClearAll ? 'w-1/2 rounded-l-xl' : 'w-full rounded-md'} bg-green-200 p-3 hover:bg-green-400 cursor-pointer disabled:bg-gray-200 disabled:cursor-not-allowed`}
+              className={`${onClearAll ? "w-1/2 rounded-l-xl" : "w-full rounded-md"} bg-green-200 p-3 hover:bg-green-400 cursor-pointer disabled:bg-gray-200 disabled:cursor-not-allowed`}
             >
               {isSaving ? "Saving..." : saveLabel}
             </button>
           )}
           {onClearAll && (
             <button
-              className={`${onSave ? 'w-1/2 rounded-r-xl' : 'w-full rounded-md'} bg-red-200 p-3 hover:bg-red-400 cursor-pointer`}
+              className={`${onSave ? "w-1/2 rounded-r-xl" : "w-full rounded-md"} bg-red-200 p-3 hover:bg-red-400 cursor-pointer`}
               onClick={onClearAll}
             >
               Del All

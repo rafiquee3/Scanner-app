@@ -20,10 +20,10 @@ export const metadata: Metadata = {
   description: "Receipt scanner powered by Gemini",
 };
 
- if (process.env.NODE_ENV === 'development' && typeof window === 'undefined') {
-  const { server } = require('@/src/mocks/node');
+if (process.env.NODE_ENV === "development" && typeof window === "undefined") {
+  const { server } = require("@/src/mocks/node");
   server.listen();
-} 
+}
 
 export default function RootLayout({
   children,
@@ -32,12 +32,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           <MSWProvider>
-            <Header/>
+            <Header />
             {children}
           </MSWProvider>
         </Providers>

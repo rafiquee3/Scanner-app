@@ -12,7 +12,13 @@ export default function ScannerPage() {
   const [items, setItems] = useState<any[]>([]);
 
   // Scan Mutation
-  const { mutate: scanMutate, data, isPending: isScanning, isError, error } = useMutation({
+  const {
+    mutate: scanMutate,
+    data,
+    isPending: isScanning,
+    isError,
+    error,
+  } = useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
       formData.append("image", file);
@@ -22,20 +28,22 @@ export default function ScannerPage() {
       if (data && Array.isArray(data)) {
         setItems(data);
       }
-    }
+    },
   });
 
   // Find date object in the array
-  const dateObj = items.find(item => item.date);
+  const dateObj = items.find((item) => item.date);
   const ticketDate = dateObj ? dateObj.date : null;
 
   // Filter only products (those with name)
-  const productItems = items.filter(item => item.name);
+  const productItems = items.filter((item) => item.name);
 
-  const total = productItems.reduce((acc: number, val: any) => {
-    const price = typeof val.price === 'string' ? parseFloat(val.price) : val.price;
-    return acc + (price || 0);
-  }, 0).toFixed(2);
+  const total = productItems
+    .reduce((acc: number, val: any) => {
+      const price = typeof val.price === "string" ? parseFloat(val.price) : val.price;
+      return acc + (price || 0);
+    }, 0)
+    .toFixed(2);
 
   // Save Mutation
   const { mutate: saveMutate, isPending: isSaving } = useMutation({
@@ -44,14 +52,14 @@ export default function ScannerPage() {
     },
     onSuccess: (res) => {
       if (res.success) {
-        queryClient.invalidateQueries({ queryKey: ['receipts'] });
+        queryClient.invalidateQueries({ queryKey: ["receipts"] });
         router.push("/receipts");
         setItems([]);
       }
     },
     onError: (err: any) => {
       alert("Error saving: " + err.message);
-    }
+    },
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,12 +69,12 @@ export default function ScannerPage() {
 
   const handleDeleteItem = (index: number) => {
     const itemToDelete = productItems[index];
-    setItems(items.filter(item => item !== itemToDelete));
+    setItems(items.filter((item) => item !== itemToDelete));
   };
 
   const handleUpdateItem = (index: number, field: string, value: string) => {
     const itemToUpdate = productItems[index];
-    const newItems = items.map(item =>
+    const newItems = items.map((item) =>
       item === itemToUpdate ? { ...item, [field]: value } : item
     );
     setItems(newItems);
@@ -77,10 +85,10 @@ export default function ScannerPage() {
       <h1 className="text-2xl font-bold mb-6">Smart Scanner</h1>
 
       <div className="mb-6 p-4 border-2 border-dashed rounded-lg text-center">
-        <input 
-          type="file" 
-          accept="image/* .pdf" 
-          onChange={handleFileChange} 
+        <input
+          type="file"
+          accept="image/* .pdf"
+          onChange={handleFileChange}
           disabled={isScanning}
           className="cursor-pointer"
         />
