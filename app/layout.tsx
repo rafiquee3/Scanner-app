@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import { Header } from "@/src/components/Header";
+import Footer from "@/src/components/Footer";
 import { MSWProvider } from "@/src/mocks/msw-provider";
 
 const geistSans = Geist({
@@ -35,8 +36,11 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           <MSWProvider>
-            <Header />
-            {children}
+            <div className="min-h-screen flex flex-col">
+              <Header />
+              <main className="flex-grow">{children}</main>
+              <Footer />
+            </div>
           </MSWProvider>
         </Providers>
       </body>
