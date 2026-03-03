@@ -69,7 +69,7 @@ export default function ReceiptEditor({
               type="text"
               value={item.name}
               onChange={(e) => onUpdateItem(originalIndex, "name", e.target.value)}
-              className="bg-transparent border-none focus:ring-1 focus:ring-blue-400 rounded px-1 w-full font-medium outline-none"
+              className="bg-transparent border-none focus:ring-1 focus:ring-blue-400 rounded px-1 w-full font-medium outline-none truncate"
               placeholder="Product name"
             />
             <select
@@ -86,7 +86,7 @@ export default function ReceiptEditor({
           </div>
 
           {/* Right: Price and Delete button - centered vertically */}
-          <div className="flex items-center gap-3 shrink-0 ml-4">
+          <div className="flex items-center  shrink-0 ">
             <div className="flex items-center gap-1">
               <input
                 type="number"
@@ -95,7 +95,6 @@ export default function ReceiptEditor({
                 onChange={(e) => handlePriceChange(originalIndex, e.target.value)}
                 className="bg-transparent border-none focus:ring-1 focus:ring-blue-400 rounded px-1 w-20 font-bold text-right outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
-              <span className="font-bold whitespace-nowrap">PLN</span>
             </div>
             <button
               onClick={() => onDeleteItem(originalIndex)}
@@ -168,7 +167,7 @@ export default function ReceiptEditor({
                 >
                   {category}
                 </span>
-                <span className="font-bold text-black">{categoryTotal.toFixed(2)} PLN</span>
+                <span className="font-bold text-black">{categoryTotal.toFixed(2)} EUR</span>
               </div>
             ))}
         </div>
@@ -177,7 +176,7 @@ export default function ReceiptEditor({
       <div>
         <div className="flex justify-between p-3 bg-[#FBD2B8] rounded text-black rounded-md">
           <span className="font-bold">Total:</span>
-          <span className="font-bold underline">{total} PLN</span>
+          <span className="font-bold underline">{total} EUR</span>
         </div>
         <div className="flex justify-between p-3 bg-gray-50 rounded text-black mt-2 rounded-md">
           <span className="font-bold">Date:</span>

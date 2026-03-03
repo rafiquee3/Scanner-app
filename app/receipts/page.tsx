@@ -145,7 +145,7 @@ export default function ReceiptsPage() {
               <div>
                 <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Total Spent</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {receipts.reduce((sum: number, r: any) => sum + (r.total || 0), 0).toFixed(2)} PLN
+                  {receipts.reduce((sum: number, r: any) => sum + (r.total || 0), 0).toFixed(2)} EUR
                 </p>
               </div>
             </div>
@@ -161,7 +161,7 @@ export default function ReceiptsPage() {
                           {new Date(receipt.date || receipt.created_at).toLocaleDateString()}
                         </p>
                         <h3 className="text-xl font-bold text-gray-900">
-                          {receipt.total.toFixed(2)} PLN
+                          {receipt.total.toFixed(2)} EUR
                         </h3>
                       </div>
                       <div className="flex items-center gap-2">
@@ -219,7 +219,7 @@ export default function ReceiptsPage() {
                                   </span>
                                 )}
                               </div>
-                              <span className="font-medium">{item.price.toFixed(2)} PLN</span>
+                              <span className="font-medium">{item.price.toFixed(2)} EUR</span>
                             </li>
                           ))}
                         {receipt.receipt_items?.length > 3 && (
