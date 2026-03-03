@@ -5,7 +5,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getReceiptByIdAction, updateReceiptAction } from "../../actions/scan-actions";
-import ReceiptEditor, { type Product } from "@/src/components/ReceiptEditor";
+import  { type Product } from "@/src/utils/receipt-utils";
+import ReceiptEditor from "@/src/components/ReceiptEditor";
 
 export default function ReceiptDetailPage() {
   const { id } = useParams<{ id: string }>();
