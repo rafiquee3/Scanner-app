@@ -6,13 +6,7 @@ import {
   CATEGORY_COLORS,
   CATEGORY_BORDER_COLORS,
 } from "@/src/utils/constants";
-
-export interface Product {
-  id?: string;
-  name: string;
-  price: number;
-  category: string;
-}
+import { calculateTotal, groupByCategory, Product } from "@/src/utils/receipt-utils";
 
 interface ReceiptEditorProps {
   items: Product[];
@@ -37,12 +31,7 @@ export default function ReceiptEditor({
 }: ReceiptEditorProps) {
   const [showDetails, setShowDetails] = useState(false);
 
-  const total = items
-    .reduce((acc, val) => {
-      const price = typeof val.price === "string" ? parseFloat(val.price) : val.price;
-      return acc + (price || 0);
-    }, 0)
-    .toFixed(2);
+  const total = calculateTotal(items);
 
   const handlePriceChange = (index: number, value: string) => {
     if (value !== "" && !/^\d*\.?\d{0,2}$/.test(value)) return;
@@ -148,14 +137,7 @@ export default function ReceiptEditor({
 
       {showDetails && (
         <div className="bg-white rounded-md overflow-hidden">
-          {Object.entries(
-            items.reduce<Record<string, number>>((acc, item) => {
-              const cat = item.category || "Other";
-              const price = typeof item.price === "string" ? parseFloat(item.price) : item.price;
-              acc[cat] = (acc[cat] || 0) + (price || 0);
-              return acc;
-            }, {})
-          )
+          {Object.entries(groupByCategory(items))
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([category, categoryTotal], i, arr) => (
               <div

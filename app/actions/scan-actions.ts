@@ -3,6 +3,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { createClient } from "@/src/utils/supabase-server";
 import { CATEGORIES } from "@/src/utils/constants";
+import { parseGeminiResponse } from "@/src/utils/receipt-utils";
 
 export async function scanImageAction(formData: FormData) {
   const file = formData.get("image") as File;
@@ -53,14 +54,7 @@ export async function scanImageAction(formData: FormData) {
       ],
     });
     const rawText = response.text || "[]";
-    const jsonString = rawText.replace(/```json|```/g, "").trim();
-
-    try {
-      return JSON.parse(jsonString);
-    } catch (parseErr) {
-      console.error("JSON Parse Error. Content:", rawText);
-      return { error: "Failed to parse receipt data. Model output was not valid JSON." };
-    }
+    return parseGeminiResponse(rawText);
   } catch (error: any) {
     console.error("Gemini Scan Error:", error);
     return { error: `Error during scanning: ${error.message || "Unknown error"}` };

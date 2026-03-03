@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import ReceiptEditor, { Product } from '@/src/components/ReceiptEditor';
+import ReceiptEditor from '@/src/components/ReceiptEditor';
+import { Product } from '@/src/utils/receipt-utils';
 import { expect, it, describe, vi } from 'vitest';
 
 const mockItems: Product[] = [

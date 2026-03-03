@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { scanImageAction, saveReceiptAction } from "./actions/scan-actions";
 import ReceiptEditor from "@/src/components/ReceiptEditor";
+import { calculateTotal } from "@/src/utils/receipt-utils";
 import { toast } from 'sonner';
 
 export default function ScannerPage() {
@@ -39,12 +40,7 @@ export default function ScannerPage() {
   // Filter only products (those with name)
   const productItems = items.filter((item) => item.name);
 
-  const total = productItems
-    .reduce((acc: number, val: any) => {
-      const price = typeof val.price === "string" ? parseFloat(val.price) : val.price;
-      return acc + (price || 0);
-    }, 0)
-    .toFixed(2);
+  const total = calculateTotal(productItems);
 
   // Save Mutation
   const { mutate: saveMutate, isPending: isSaving } = useMutation({
