@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calculateTotal, groupByCategory, parseGeminiResponse } from '@/src/utils/receipt-utils';
+import { calculateTotal, groupByCategory, parseGeminiResponse, formatDate } from '@/src/utils/receipt-utils';
 
 describe('receipt-utils', () => {
   describe('calculateTotal', () => {
@@ -59,6 +59,25 @@ describe('receipt-utils', () => {
       const raw = 'this is not json';
       const result = parseGeminiResponse(raw);
       expect(result).toHaveProperty('error');
+    });
+  });
+
+  describe('formatDate', () => {
+    it('formats valid ISO dates', () => {
+      expect(formatDate('2024-03-03')).toBe('2024-03-03');
+    });
+
+    it('formats human readable dates', () => {
+      expect(formatDate('2024-03-03T00:00:00Z')).toBe('2024-03-03');
+    });
+
+    it('returns null for invalid dates', () => {
+      expect(formatDate('not-a-date')).toBeNull();
+    });
+
+    it('returns null for empty/null input', () => {
+      expect(formatDate('')).toBeNull();
+      expect(formatDate(null as any)).toBeNull();
     });
   });
 });

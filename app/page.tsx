@@ -108,6 +108,7 @@ export default function ScannerPage() {
           onChange={handleFileChange}
           disabled={isScanning}
           className="cursor-pointer"
+          data-testid="file-input"
         />
         {isScanning && <p className="mt-2 text-blue-500">Loading...</p>}
       </div>

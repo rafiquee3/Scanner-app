@@ -3,7 +3,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { createClient } from "@/src/utils/supabase-server";
 import { CATEGORIES } from "@/src/utils/constants";
-import { parseGeminiResponse } from "@/src/utils/receipt-utils";
+import { parseGeminiResponse, formatDate } from "@/src/utils/receipt-utils";
 
 export async function scanImageAction(formData: FormData) {
   const file = formData.get("image") as File;
@@ -70,15 +70,7 @@ export async function saveReceiptAction(items: any[], total: string, date: strin
   } = await supabase.auth.getUser();
   if (!user) throw new Error("You must be logged in!");
   // 1. Validate and format date
-  let cleanDate = null;
-  if (date) {
-    const d = new Date(date);
-    if (!isNaN(d.getTime())) {
-      cleanDate = d.toISOString().split("T")[0]; // Format as YYYY-MM-DD
-    } else {
-      console.warn("Invalid date received from model:", date);
-    }
-  }
+  const cleanDate = formatDate(date);
 
   // 2. Save receipt header
   const { data: receipt, error: rError } = await supabase
@@ -203,13 +195,7 @@ export async function updateReceiptAction(
   if (!user) throw new Error("Not authenticated");
 
   // Validate date
-  let cleanDate = null;
-  if (date) {
-    const d = new Date(date);
-    if (!isNaN(d.getTime())) {
-      cleanDate = d.toISOString().split("T")[0];
-    }
-  }
+  const cleanDate = formatDate(date);
 
   // Update receipt header
   const { error: rError } = await supabase

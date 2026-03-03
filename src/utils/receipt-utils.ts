@@ -41,3 +41,15 @@ export function parseGeminiResponse(rawText: string): any {
     return { error: "Invalid JSON format from AI" };
   }
 }
+
+/**
+ * Formats a date string into YYYY-MM-DD format.
+ * Returns null if the date is invalid.
+ */
+export function formatDate(dateStr: string | null | undefined): string | null {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return null;
+  return d.toISOString().split("T")[0];
+}
+
