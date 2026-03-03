@@ -60,7 +60,7 @@ export default function ScannerPage() {
       }
     },
     onError: (err: any) => {
-      toast.error("Could not save the receipt");
+      toast.error("Could not save the receipt, user must bee logged in.");
     },
   });
 
@@ -107,7 +107,7 @@ export default function ScannerPage() {
       <div className="mb-6 p-4 border-2 border-dashed rounded-lg text-center">
         <input
           type="file"
-          accept="image/* .pdf"
+          accept="image/*"
           capture="environment" 
           onChange={handleFileChange}
           disabled={isScanning}
