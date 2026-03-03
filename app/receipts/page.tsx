@@ -134,6 +134,22 @@ export default function ReceiptsPage() {
         </div>
       ) : (
         <>
+           {/* Summary bar */}
+          <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex justify-between items-center mb-6">
+            <div className="flex items-center gap-6">
+              <div>
+                <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Receipts</p>
+                <p className="text-2xl font-bold text-gray-900">{receipts.length}</p>
+              </div>
+              <div className="w-px h-10 bg-gray-200"></div>
+              <div>
+                <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Total Spent</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {receipts.reduce((sum: number, r: any) => sum + (r.total || 0), 0).toFixed(2)} PLN
+                </p>
+              </div>
+            </div>
+          </div>
           <div className="grid gap-6">
             {receipts.map((receipt) => (
               <Link key={receipt.id} href={`/receipts/${receipt.id}`} className="block">
@@ -217,23 +233,6 @@ export default function ReceiptsPage() {
                 </div>
               </Link>
             ))}
-          </div>
-
-          {/* Summary bar */}
-          <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex justify-between items-center">
-            <div className="flex items-center gap-6">
-              <div>
-                <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Receipts</p>
-                <p className="text-2xl font-bold text-gray-900">{receipts.length}</p>
-              </div>
-              <div className="w-px h-10 bg-gray-200"></div>
-              <div>
-                <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Total Spent</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {receipts.reduce((sum: number, r: any) => sum + (r.total || 0), 0).toFixed(2)} PLN
-                </p>
-              </div>
-            </div>
           </div>
         </>
       )}

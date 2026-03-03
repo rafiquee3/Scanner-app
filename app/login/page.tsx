@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 
 export default function LoginPage() {
   const handleGoogleLogin = async () => {
+    console.log('dupa', window.location.origin)
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
