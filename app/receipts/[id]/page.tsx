@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { getReceiptByIdAction, updateReceiptAction } from "../../actions/scan-actions";
+import { getReceiptByIdAction, updateReceiptAction } from "@/src/actions/scan-actions";
 import  { type Product } from "@/src/utils/receipt-utils";
 import ReceiptEditor from "@/src/components/ReceiptEditor";
 

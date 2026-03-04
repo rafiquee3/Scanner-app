@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getReceiptsAction, deleteReceiptAction } from "../actions/scan-actions";
+import { getReceiptsAction, deleteReceiptAction } from "@/src/actions/scan-actions";
 import Link from "next/link";
 import { CATEGORY_COLORS, MONTHS } from "@/src/utils/constants";
 

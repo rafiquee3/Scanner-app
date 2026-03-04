@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { scanImageAction, saveReceiptAction } from "./actions/scan-actions";
+import { scanImageAction, saveReceiptAction } from "@/src/actions/scan-actions";
 import ReceiptEditor from "@/src/components/ReceiptEditor";
 import { calculateTotal } from "@/src/utils/receipt-utils";
 import { toast } from 'sonner';

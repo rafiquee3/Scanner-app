@@ -37,7 +37,7 @@ export const viewport: Viewport = {
 
 if (process.env.NODE_ENV === "development" && typeof window === "undefined") {
   const { server } = require("@/src/mocks/node");
-  server.listen();
+  server.listen({ onUnhandledRequest: "bypass" });
 }
 
 export default function RootLayout({
@@ -46,8 +46,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
         <Providers>
        
             <div className="min-h-screen flex flex-col">

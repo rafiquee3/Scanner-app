@@ -3,12 +3,12 @@ import ScannerPage from '@/app/page';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-vi.mock('@/app/actions/scan-actions', () => ({
+vi.mock('@/src/actions/scan-actions', () => ({
   scanImageAction: vi.fn(),
   saveReceiptAction: vi.fn(),
 }));
 
-import { scanImageAction, saveReceiptAction } from '@/app/actions/scan-actions';
+import { scanImageAction, saveReceiptAction } from '@/src/actions/scan-actions';
 
 const createTestQueryClient = () => new QueryClient({
   defaultOptions: {
