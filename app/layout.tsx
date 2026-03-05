@@ -47,16 +47,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
+      >
         <Providers>
-       
-            <div className="min-h-screen flex flex-col">
-              <Header />
-              <main className="flex-grow">{children}</main>
-              <Footer />
-              <Toaster position="bottom-right" richColors/>
-            </div>
-         
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+            <Toaster position="bottom-right" richColors />
+          </div>
         </Providers>
       </body>
     </html>

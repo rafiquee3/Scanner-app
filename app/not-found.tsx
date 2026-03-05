@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function NotFound() {
   return (
@@ -23,11 +23,9 @@ export default function NotFound() {
             <line x1="9" y1="9" x2="15" y2="15" />
           </svg>
         </div>
-        
+
         <h1 className="text-5xl font-black text-gray-900 mb-2 font-outfit">404</h1>
-        <h2 className="text-xl font-bold text-gray-800 mb-4">
-          Oops! Page not found
-        </h2>
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Oops! Page not found</h2>
         <p className="text-gray-500 mb-8 text-sm leading-relaxed">
           The page you are looking for has been moved or doesn't exist in our Scanner AI dashboard.
         </p>

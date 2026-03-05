@@ -1,23 +1,24 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import ScannerPage from '@/app/page';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import ScannerPage from "@/app/page";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-vi.mock('@/src/actions/scan-actions', () => ({
+vi.mock("@/src/actions/scan-actions", () => ({
   scanImageAction: vi.fn(),
   saveReceiptAction: vi.fn(),
 }));
 
-import { scanImageAction, saveReceiptAction } from '@/src/actions/scan-actions';
+import { scanImageAction, saveReceiptAction } from "@/src/actions/scan-actions";
 
-const createTestQueryClient = () => new QueryClient({
-  defaultOptions: {
-    queries: { retry: false },
-    mutations: { retry: false },
-  },
-});
+const createTestQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
 
-describe('ScannerPage Integration', () => {
+describe("ScannerPage Integration", () => {
   let queryClient: QueryClient;
 
   beforeEach(() => {
@@ -25,11 +26,8 @@ describe('ScannerPage Integration', () => {
     vi.clearAllMocks();
   });
 
-  it('flows from file selection to showing results', async () => {
-    const mockData = [
-      { name: 'Coffee', price: 5.50, category: 'Drinks' },
-      { date: '2024-03-03' }
-    ];
+  it("flows from file selection to showing results", async () => {
+    const mockData = [{ name: "Coffee", price: 5.5, category: "Drinks" }, { date: "2024-03-03" }];
     (scanImageAction as any).mockResolvedValue(mockData);
 
     render(
@@ -39,22 +37,22 @@ describe('ScannerPage Integration', () => {
     );
 
     // Simulate file upload
-    const file = new File(['hello'], 'receipt.png', { type: 'image/png' });
-    const input = screen.getByTestId('file-input');
-    
+    const file = new File(["hello"], "receipt.png", { type: "image/png" });
+    const input = screen.getByTestId("file-input");
+
     fireEvent.change(input, { target: { files: [file] } });
 
     // Wait for ReceiptEditor to appear with data
     await waitFor(() => {
-      expect(screen.getByDisplayValue('Coffee')).toBeInTheDocument();
+      expect(screen.getByDisplayValue("Coffee")).toBeInTheDocument();
     });
 
-    expect(screen.getByText('5.50 EUR')).toBeInTheDocument();
-    expect(screen.getByText('2024-03-03')).toBeInTheDocument();
+    expect(screen.getByText("5.50 EUR")).toBeInTheDocument();
+    expect(screen.getByText("2024-03-03")).toBeInTheDocument();
   });
 
-  it('calls saveReceiptAction when Save is clicked', async () => {
-     const mockData = [{ name: 'Bread', price: 2.00, category: 'Food' }];
+  it("calls saveReceiptAction when Save is clicked", async () => {
+    const mockData = [{ name: "Bread", price: 2.0, category: "Food" }];
     (scanImageAction as any).mockResolvedValue(mockData);
     (saveReceiptAction as any).mockResolvedValue({ success: true });
 
@@ -64,13 +62,13 @@ describe('ScannerPage Integration', () => {
       </QueryClientProvider>
     );
 
-    fireEvent.change(screen.getByTestId('file-input'), {
-      target: { files: [new File([''], 'test.png')] }
+    fireEvent.change(screen.getByTestId("file-input"), {
+      target: { files: [new File([""], "test.png")] },
     });
 
-    await waitFor(() => screen.getByText('Save'));
-    
-    fireEvent.click(screen.getByText('Save'));
+    await waitFor(() => screen.getByText("Save"));
+
+    fireEvent.click(screen.getByText("Save"));
 
     await waitFor(() => {
       expect(saveReceiptAction).toHaveBeenCalled();

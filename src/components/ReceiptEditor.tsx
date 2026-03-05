@@ -1,11 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  CATEGORIES,
-  CATEGORY_COLORS,
-  CATEGORY_BORDER_COLORS,
-} from "@/src/utils/constants";
+import { CATEGORIES, CATEGORY_COLORS, CATEGORY_BORDER_COLORS } from "@/src/utils/constants";
 import { calculateTotal, groupByCategory, Product } from "@/src/utils/receipt-utils";
 
 interface ReceiptEditorProps {

@@ -1,10 +1,9 @@
 "use client";
 
 import { supabase } from "@/src/utils/supabase";
-import { toast } from 'sonner';
+import { toast } from "sonner";
 import { useState } from "react";
 import Link from "next/link";
-
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -17,7 +16,7 @@ export default function RegisterPage() {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` }
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     });
     if (error) toast.error(error.message);
     else toast.success("Check your email to confirm your registration!");
@@ -34,9 +33,9 @@ export default function RegisterPage() {
         <form onSubmit={handleEmailSignUp} className="space-y-4 mb-6">
           <div>
             <label className="text-sm font-medium text-gray-700">Email</label>
-            <input 
-              type="email" 
-              value={email} 
+            <input
+              type="email"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full p-3 border rounded-xl mt-1 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm hover:bg-gray-50 text-gray-500 border-gray-200"
               placeholder="you@example.com"
@@ -45,17 +44,17 @@ export default function RegisterPage() {
           </div>
           <div>
             <label className="text-sm font-medium text-gray-700">Password</label>
-            <input 
-              type="password" 
-              value={password} 
+            <input
+              type="password"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full p-3 border rounded-xl mt-1 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm hover:bg-gray-50 text-gray-500 border-gray-200"
               placeholder="••••••••"
               required
             />
           </div>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={loading}
             className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all disabled:opacity-50"
           >

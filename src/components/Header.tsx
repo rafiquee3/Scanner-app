@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/src/utils/supabase";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-import { toast } from 'sonner';
+import { toast } from "sonner";
 
 export function Header() {
   const [user, setUser] = useState<User | null>(null);
@@ -24,7 +24,7 @@ export function Header() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
-      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
         router.refresh();
       }
     });

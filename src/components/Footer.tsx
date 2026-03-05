@@ -31,9 +31,7 @@ export default function Footer() {
                 Smart Scanner
               </span>
             </div>
-            <p className="text-gray-500 text-xs">
-              © {currentYear} Smart Scanner
-            </p>
+            <p className="text-gray-500 text-xs">© {currentYear} Smart Scanner</p>
           </div>
 
           <div className="grid grid-cols-2 gap-8">

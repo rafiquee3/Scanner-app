@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getReceiptsAction, deleteReceiptAction } from "@/src/actions/scan-actions";
 import Link from "next/link";
 import { CATEGORY_COLORS, MONTHS } from "@/src/utils/constants";
-import { toast } from 'sonner';
+import { toast } from "sonner";
 
 export default function ReceiptsPage() {
   const queryClient = useQueryClient();
@@ -39,8 +39,8 @@ export default function ReceiptsPage() {
   const { mutate: deleteMutate, isPending: isDeleting } = useMutation({
     mutationFn: (receiptId: string) => deleteReceiptAction(receiptId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["receipts"] }); // refresh 
-        toast.success("Receipt deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["receipts"] }); // refresh
+      toast.success("Receipt deleted successfully");
     },
     onError: (err: any) => {
       alert("Error deleting: " + err.message);
@@ -159,16 +159,20 @@ export default function ReceiptsPage() {
         </div>
       ) : (
         <>
-           {/* Summary bar */}
+          {/* Summary bar */}
           <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex justify-between items-center mb-6">
             <div className="flex items-center gap-6">
               <div>
-                <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Receipts</p>
+                <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">
+                  Receipts
+                </p>
                 <p className="text-2xl font-bold text-gray-900">{receipts.length}</p>
               </div>
               <div className="w-px h-10 bg-gray-200"></div>
               <div>
-                <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Total Spent</p>
+                <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">
+                  Total Spent
+                </p>
                 <p className="text-2xl font-bold text-gray-900">
                   {receipts.reduce((sum: number, r: any) => sum + (r.total || 0), 0).toFixed(2)} EUR
                 </p>

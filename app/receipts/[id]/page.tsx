@@ -5,9 +5,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getReceiptByIdAction, updateReceiptAction } from "@/src/actions/scan-actions";
-import  { type Product } from "@/src/utils/receipt-utils";
+import { type Product } from "@/src/utils/receipt-utils";
 import ReceiptEditor from "@/src/components/ReceiptEditor";
-import { toast } from 'sonner';
+import { toast } from "sonner";
 
 export default function ReceiptDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -76,7 +76,7 @@ export default function ReceiptDetailPage() {
 
   const handleDeleteItem = (index: number) => {
     setItems(items.filter((_, i) => i !== index));
-     toast.error("Item removed from list");
+    toast.error("Item removed from list");
   };
 
   if (isLoading) {

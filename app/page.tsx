@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { scanImageAction, saveReceiptAction } from "@/src/actions/scan-actions";
 import ReceiptEditor from "@/src/components/ReceiptEditor";
 import { calculateTotal } from "@/src/utils/receipt-utils";
-import { toast } from 'sonner';
+import { toast } from "sonner";
 
 export default function ScannerPage() {
   const queryClient = useQueryClient();
@@ -105,7 +105,7 @@ export default function ScannerPage() {
         <input
           type="file"
           accept="image/*"
-          capture="environment" 
+          capture="environment"
           onChange={handleFileChange}
           disabled={isScanning}
           className="cursor-pointer"

@@ -52,4 +52,3 @@ export function formatDate(dateStr: string | null | undefined): string | null {
   if (isNaN(d.getTime())) return null;
   return d.toISOString().split("T")[0];
 }
-
