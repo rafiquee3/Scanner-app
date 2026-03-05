@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getReceiptsAction, deleteReceiptAction } from "@/src/actions/scan-actions";
 import Link from "next/link";
 import { CATEGORY_COLORS, MONTHS } from "@/src/utils/constants";
+import { toast } from 'sonner';
 
 export default function ReceiptsPage() {
   const queryClient = useQueryClient();
@@ -39,9 +40,11 @@ export default function ReceiptsPage() {
     mutationFn: (receiptId: string) => deleteReceiptAction(receiptId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["receipts"] }); // refresh 
+        toast.success("Receipt deleted successfully");
     },
     onError: (err: any) => {
       alert("Error deleting: " + err.message);
+      toast.error("Failed to delete the receipt");
     },
   });
 

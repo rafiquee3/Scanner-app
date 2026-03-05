@@ -28,6 +28,7 @@ export default function ScannerPage() {
     },
     onSuccess: (data) => {
       if (data && Array.isArray(data)) {
+        toast.success("Receipt scanned successfully");
         setItems(data);
       }
     },
