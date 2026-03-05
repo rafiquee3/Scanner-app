@@ -2,11 +2,13 @@
 
 import { supabase } from "@/src/utils/supabase";
 import { toast } from 'sonner';
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,12 +19,14 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     
     if (error) toast.error(error.message);
-    else toast.success("Zalogowano!");
-    setLoading(false);
+    else {
+      toast.success("Logged in successfully!");
+      router.push("/");
+      setLoading(false);
+    }
   };
 
   const handleGoogleLogin = async () => {
-    console.log('dupa', window.location.origin)
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -33,6 +37,7 @@ export default function LoginPage() {
     if (error) {
       toast.error("Problem logging in the user");
       console.error("Login error:", error.message);
+      setLoading(false);
     } 
   };
 

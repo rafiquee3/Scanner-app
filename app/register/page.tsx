@@ -11,16 +11,16 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Rejestracja E-mailem
-  const handleEmailSignUp = async () => {
+  const handleEmailSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      //options: { emailRedirectTo: `${window.location.origin}/auth/callback` }
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` }
     });
     if (error) toast.error(error.message);
-    else toast.success("Sprawdź e-mail, aby potwierdzić rejestrację!");
+    else toast.success("Check your email to confirm your registration!");
     setLoading(false);
   };
 
