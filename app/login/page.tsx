@@ -2,8 +2,25 @@
 
 import { supabase } from "@/src/utils/supabase";
 import { toast } from 'sonner';
+import { useState } from "react";
+import Link from "next/link";
+
 
 export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    
+    if (error) toast.error(error.message);
+    else toast.success("Zalogowano!");
+    setLoading(false);
+  };
+
   const handleGoogleLogin = async () => {
     console.log('dupa', window.location.origin)
     const { error } = await supabase.auth.signInWithOAuth({
@@ -41,6 +58,50 @@ export default function LoginPage() {
           <p className="text-gray-500">Sign in to sync your scanned receipts</p>
         </div>
 
+        <form onSubmit={handleEmailLogin} className="space-y-4 mb-6">
+          <div>
+            <label className="text-sm font-medium text-gray-700">Email</label>
+            <input 
+              type="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-3 border rounded-xl mt-1 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm hover:bg-gray-50 text-gray-500 border-gray-200"
+              placeholder="you@example.com"
+              required
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700">Password</label>
+            <input 
+              type="password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-3 border rounded-xl mt-1 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm hover:bg-gray-50 text-gray-500 border-gray-200"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all disabled:opacity-50"
+          >
+            {loading ? "Processing..." : "Sign In with Email"}
+          </button> 
+          <Link 
+            href="/register"
+            className="w-full text-blue-600 text-sm font-medium hover:underline block text-center"
+          >
+            Don't have an account? Sign Up
+          </Link>
+
+        </form>
+
+        <div className="relative mb-6">
+          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
+          <div className="relative flex justify-center text-sm"><span className="px-2 bg-white text-gray-500">Or continue with</span></div>
+        </div>
+        
         <div className="space-y-4">
           <button
             onClick={handleGoogleLogin}
@@ -85,12 +146,12 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <a
+      <Link
         href="/"
-        className="mt-6 text-gray-500 hover:text-gray-800 transition-colors text-sm font-medium"
+        className="mt-6 text-gray-400 hover:text-gray-200 transition-colors text-sm font-medium"
       >
         ← Back to Scanner
-      </a>
+      </Link>
     </div>
   );
 }
