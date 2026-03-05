@@ -38,7 +38,7 @@ export default function RegisterPage() {
               type="email" 
               value={email} 
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 border rounded-xl mt-1 focus:ring-2 focus:ring-blue-500 outline-none  "
+              className="w-full p-3 border rounded-xl mt-1 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm hover:bg-gray-50 text-gray-500 border-gray-200"
               placeholder="you@example.com"
               required
             />
